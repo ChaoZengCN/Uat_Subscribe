@@ -1,5 +1,5 @@
 import psycopg2,time
-from Config import ConfigSql,ConfigDatabase
+from /Subscribe/code/Uat_Subscribe/Config import ConfigSql,ConfigDatabase
 
 
 class config:
