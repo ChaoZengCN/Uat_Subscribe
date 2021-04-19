@@ -1,0 +1,70 @@
+part1:
+#----------------数据中心删除订阅
+  - &data1
+    center: "datacenter"
+    sql: 
+      - "select * from pg_subscription;"
+      - "alter subscription ctc_sub  DISABLE ;"
+      - "alter subscription ctc_sub  set (slot_name = None) ;"
+      - "Drop SUBSCRIPTION ctc_sub ;"
+      - "alter subscription lc_sub DISABLE ;"
+      - "alter subscription lc_sub set (slot_name  = None) ;"
+      - "Drop SUBSCRIPTION lc_sub;"
+      - "alter subscription stc_sub DISABLE ;"
+      - "alter subscription stc_sub set (slot_name = None) ;"
+      - "Drop SUBSCRIPTION stc_sub;"
+      - "alter subscription tc_sub DISABLE ;"
+      - "alter subscription tc_sub set (slot_name = None) ;"
+      - "Drop SUBSCRIPTION tc_sub ;"
+      - "select * from pg_subscription;"
+
+
+part2:
+#-----------------重建发布端
+#----合作方中心
+  - &contact
+    center: "contactcenter"
+    sql: 
+      - "Drop publication ctc_pub;"
+      - "select pg_drop_replication_slot('ctc_sub');"
+      - "create publication ctc_pub for table  ctc_bank_account,ctc_business_info,ctc_docking_log,ctc_info,ctc_info_account,ctc_info_contacts,ctc_info_email,ctc_info_level,ctc_logistics_quotation_rule,ctc_message_log,ctc_operation_logs,ctc_price_manage,ctc_price_rule,ctc_quotation,ctc_quotation_detail,ctc_service_capability,ctc_stock_quotation,ctc_info;"
+      - "select * from pg_create_logical_replication_slot('ctc_sub','pgoutput');"
+  
+#----物流中心
+  - &logistics
+    center: "logisticscenter"
+    sql: 
+      - "Drop publication lc_pub ;"
+      - "select pg_drop_replication_slot('lc_sub');"
+      - "create publication lc_pub for table  lc_air_cabin_cargo_information,lc_air_cabin_orders_information,lc_air_cabin_realtime_information,lc_air_cabin_used_information,lc_air_company,lc_air_flight,lc_air_harbour,lc_air_lading_bill_no_planning,lc_air_lading_bill_no_pool,lc_air_panel,lc_air_panel_setting,lc_air_panel_setting_orders,lc_air_three_character_code,lc_customs_clearance_detail,lc_docking_log,lc_driver,lc_image_record,lc_message_log,lc_oil_consume,lc_operation_records,lc_receipt,lc_return_goods,lc_return_goods_detail,lc_sundry_fee,lc_transport_operation_log,lc_waybill,lc_transport_order,lc_vehicle,lc_vehicle_accident,lc_vehicle_maintenance,lc_warehouse_batch_no_pool,lc_warehouse_outbound,lc_waybill_exception_log,lc_waybill_state,lc_waybill_track,lc_wh_order,lc_wh_order_detail,lc_wh_order_log,lc_wh_order_service,lc_wh_out_order,lc_wh_out_order_detail,lc_air_announce_freight_rate,lc_oil_consume_report,lc_customs_clearance,lc_customs_delivery,lc_play_board_order,lc_security_check_order,lc_booking_business,lc_other_order;"
+      - "select * from pg_create_logical_replication_slot('lc_sub','pgoutput');"
+
+#----结算中心
+  - &settlement
+    center: "settlementcenter"
+    sql: 
+      - "Drop publication stc_pub ;"
+      - "select pg_drop_replication_slot('stc_sub');"
+      - "create publication stc_pub for table stc_message_log,stc_reconciliation_bill,stc_reconciliation_bill_detail,stc_settlement_batch,stc_settlement_bill_detail,stc_tax_invoice,stc_verification_bill,stc_verification_details,stc_actual_amount_info,stc_adjust,stc_apply,stc_apply_detail,stc_audit_log,stc_business_cost,stc_change_log,stc_cost_item,stc_credit_apply,stc_exchange_info,stc_foreign_exchange,stc_funds_account,stc_invoice,stc_invoice_detail,stc_issuing_office;"
+      - "select * from pg_create_logical_replication_slot('stc_sub','pgoutput');"
+
+#----订单中心
+  - &trade
+    center: "tradecenter"
+    sql: 
+      - "Drop publication tc_pub;"
+      - "select pg_drop_replication_slot('tc_sub');"
+      - "create publication tc_pub for table  tc_arrive_detail,tc_batch,tc_batch_send_detail,tc_booking_business,tc_cargo_line,tc_clearance_business,tc_common_business,tc_contact_info,tc_delivery_business,tc_docking_log,tc_media_record,tc_message_log,tc_order,tc_bill_lading,tc_order_relation,tc_service_template,tc_order_track,tc_stock_business;"
+      - "select * from pg_create_logical_replication_slot('tc_sub','pgoutput');"
+
+
+part3:
+#--------------------数据中心重建订阅
+  - &data2
+    center: "datacenter"
+    sql: 
+      - "create subscription ctc_sub  connection 'host=localhost port=3002 user=gaojie_test password=jXKE9BOiCBrt3huM dbname=contactcenter' publication ctc_pub with (enabled=true,create_slot=false, slot_name='ctc_sub');"
+      - "create subscription lc_sub connection 'host=localhost port=3002 user=gaojie_test password=jXKE9BOiCBrt3huM dbname=logisticscenter' publication lc_pub with (enabled=true,create_slot=false, slot_name='lc_sub');"
+      - "create subscription  stc_sub  connection 'host=localhost port=3002 user=gaojie_test password=jXKE9BOiCBrt3huM dbname=settlementcenter' publication stc_pub with (enabled=true,create_slot=false, slot_name='stc_sub');"
+      - "create subscription tc_sub connection 'host=localhost port=3002 user=gaojie_test password=jXKE9BOiCBrt3huM dbname=tradecenter' publication tc_pub with (enabled=true,create_slot=false, slot_name='tc_sub');"
+      - "select * from pg_subscription;"

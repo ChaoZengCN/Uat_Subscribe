@@ -1,0 +1,5 @@
+UAT:  
+  host: "pgm-wz9jm603zb7e8sbr1277905m.pg.rds.aliyuncs.com"
+  port: 1921
+  username: "gaojie_test"
+  password: "jXKE9BOiCBrt3huM"
