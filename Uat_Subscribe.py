@@ -1,6 +1,5 @@
 import psycopg2,time
 import yaml,os
-# from Config import ConfigSql,ConfigDatabase
 
 
 class ConfigSql:
