@@ -1,5 +1,6 @@
-import psycopg2,time
-from /Subscribe/code/Uat_Subscribe/Config import ConfigSql,ConfigDatabase
+import psycopg2,time,sys
+sys.path.append('/Subscribe/code/Uat_Subscribe/')
+from Config import ConfigSql,ConfigDatabase
 
 
 class config:
