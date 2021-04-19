@@ -5,7 +5,7 @@ path = '/Subscribe/code/Uat_Subscribe'
 class ConfigSql:
     '''读取配置sql文件'''
     # filename = str(os.getcwd()) + '\\' + 'Uat_Sql.yaml'
-    filename = path + '\\' + 'Uat_Sql.yaml'
+    filename = path + '\/' + 'Uat_Sql.yaml'
     if os.path.exists(filename):
         #返回指定步骤的数据
         def operateYaml(self,part):
@@ -17,7 +17,7 @@ class ConfigSql:
 
 class ConfigDatabase:
     # filename =  str(os.getcwd()) + '\\' + 'Database.yaml'
-    filename = path + '\\' + 'Database.yaml'
+    filename = path + '\/' + 'Database.yaml'
     if os.path.exists(filename):
         #返回指定的数据库配置
         def operateYaml(self,environment):
