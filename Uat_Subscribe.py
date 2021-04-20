@@ -1,18 +1,29 @@
 import psycopg2,time
-# import yaml,os
-from Config import ConfigSql,ConfigDatabase
+import yaml,os
+# from Config import ConfigSql,ConfigDatabase
+
+sql_filename = str(os.getcwd()) + '\\' + 'Uat_Sql.yaml'
+data_filename =  str(os.getcwd()) + '\\' + 'Database.yaml'
 
 class config:
-    configDatabase = ConfigDatabase()
-    configSql = ConfigSql()
+    # configDatabase = ConfigDatabase()
+    # configSql = ConfigSql()
+    def operateYaml(self,filename,value):
+        if os.path.exists(filename):
+            #读取YAML文件的数据
+            with open(filename, encoding='utf-8') as f: 
+                self.data = yaml.safe_load(f.read())
+            return self.data[value]
+        else:
+            print('文件不存在！')
 
 class uatSubscribe(config):
     '''封装方法'''
-    
+    config = config()
     #连接数据库，执行sql，关闭连接
     def dataCenterExecute(self,center,sql):
         #获取数据库信息
-        self.database_Data = self.configDatabase.operateYaml('UAT')
+        self.database_Data = self.config.operateYaml(data_filename,'UAT')
         db = None
         #连接数据库
         try:
@@ -51,7 +62,7 @@ class uatSubscribe(config):
     # 根据步骤连接数据库并执行
     def part(self,part):
         try:
-            self.data = config.configSql.operateYaml(part)
+            self.data = self.config.operateYaml(sql_filename,part)
             for num in range(0,len(self.data)):
                 self.center = self.data[num]['center']
                 self.sql = self.data[num]['sql']
@@ -66,7 +77,7 @@ class uatSubscribe(config):
 class main(uatSubscribe):
     '''执行逻辑'''
     uatSubscribe = uatSubscribe()
-    # 第一步，删除数据中心所有的订阅,之后清空所有的表
+    # 第一步，删除数据中心所有的订阅
     # 第一步，删除数据中心所有表的数据
     print('==================================================')
     print('=============测试环境重新订阅开始===================')
