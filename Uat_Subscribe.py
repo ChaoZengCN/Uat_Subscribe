@@ -2,8 +2,8 @@ import psycopg2,time
 import yaml,os
 # from Config import ConfigSql,ConfigDatabase
 
-sql_filename = str(os.getcwd()) + '\\' + 'Uat_Sql.yaml'
-data_filename =  str(os.getcwd()) + '\\' + 'Database.yaml'
+sql_filename = '/Subscribe/code/Uat_Subscribe/Uat_Sql.yaml'
+data_filename =  '/Subscribe/code/Uat_Subscribe/Database.yaml'
 
 class config:
     # configDatabase = ConfigDatabase()
